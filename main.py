@@ -31,22 +31,25 @@ def main():
 
     bot = TeleBot(settings.TELEGRAM_TOKEN, parse_mode="HTML")
 
-    for url in PARS_URLS:
-        tasks = get_tasks(url)
+    while True:
+        for url in PARS_URLS:
+            tasks = get_tasks(url)
 
-        for task in tasks:
-            if task.id in sent_tasks_ids:
-                continue
+            for task in tasks:
+                if task.id in sent_tasks_ids:
+                    continue
 
-            logger.info("Отправка сообщения")
-            keyboard = InlineKeyboardMarkup()
-            keyboard.add(InlineKeyboardButton(text=str(task.price), url=task.url))
-            bot.send_message(settings.USER_ID, task.text_for_tg, reply_markup=keyboard)
-            logger.info(f"Сообщение отправлено")
+                logger.info("Отправка сообщения")
+                keyboard = InlineKeyboardMarkup()
+                keyboard.add(InlineKeyboardButton(text=str(task.price), url=task.url))
+                bot.send_message(settings.USER_ID, task.text_for_tg, reply_markup=keyboard)
+                logger.info(f"Сообщение отправлено")
 
-            SentTask.add(db, task.id)
-            sent_tasks_ids.append(task.id)
-            time.sleep(1)
+                SentTask.add(db, task.id)
+                sent_tasks_ids.append(task.id)
+                time.sleep(1)
+            time.sleep(10)
+        time.sleep(2 * 60)
 
 
 if __name__ == "__main__":
