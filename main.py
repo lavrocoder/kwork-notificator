@@ -1,9 +1,13 @@
+import time
+
 from loguru import logger
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from app.clients import KWork
 from app.core.config import settings, BASE_DIR, PARS_URLS
+from app.db.session import get_db
+from app.models.sent_task import SentTask
 from app.schemas import Task
 
 
@@ -19,9 +23,11 @@ def get_tasks(url: str) -> list[Task]:
 
 @logger.catch
 def main():
-    sent_tasks_ids = []
+    db = next(get_db())
+    sent_tasks_ids = SentTask.get_all_ids(db)
     logger.info("Запуск")
     logger.info(f"Отслеживаемые ссылки: {PARS_URLS}")
+    logger.info(f"{sent_tasks_ids=}")
 
     bot = TeleBot(settings.TELEGRAM_TOKEN, parse_mode="HTML")
 
@@ -32,11 +38,15 @@ def main():
             if task.id in sent_tasks_ids:
                 continue
 
+            logger.info("Отправка сообщения")
             keyboard = InlineKeyboardMarkup()
             keyboard.add(InlineKeyboardButton(text=str(task.price), url=task.url))
             bot.send_message(settings.USER_ID, task.text_for_tg, reply_markup=keyboard)
+            logger.info(f"Сообщение отправлено")
+
+            SentTask.add(db, task.id)
             sent_tasks_ids.append(task.id)
-            break
+            time.sleep(1)
 
 
 if __name__ == "__main__":

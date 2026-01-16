@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     TELEGRAM_TOKEN: str = None
     USER_ID: int = None
+    DATABASE_URL: str = "sqlite:///./data/app.db"
 
 
 settings = Settings()
