@@ -31,7 +31,5 @@ class Settings(BaseSettings):
 settings = Settings()
 
 PARS_URLS = [
-    "https://kwork.ru/projects?c=80&view=0",
-    "https://kwork.ru/projects?c=255&view=0",
-    "https://kwork.ru/projects?c=41&view=0",
+    "https://kwork.ru/projects?c=11&view=0",
 ]
