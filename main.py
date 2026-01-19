@@ -42,7 +42,12 @@ def main():
                 logger.info("Отправка сообщения")
                 keyboard = InlineKeyboardMarkup()
                 keyboard.add(InlineKeyboardButton(text=str(task.price), url=task.url))
-                bot.send_message(settings.USER_ID, task.text_for_tg, reply_markup=keyboard)
+                bot.send_message(
+                    settings.USER_ID,
+                    task.text_for_tg,
+                    reply_markup=keyboard,
+                    disable_web_page_preview=True
+                )
                 logger.info(f"Сообщение отправлено")
 
                 SentTask.add(db, task.id)
