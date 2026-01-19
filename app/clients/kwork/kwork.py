@@ -3,7 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
-from app.schemas import Task
+from app.schemas import Task, File
 
 
 class KWork:
@@ -39,7 +39,12 @@ class KWork:
             price = int(want.get('priceLimit', '0').replace(".00", ""))
             description = want.get("description", "")
             want_id = want.get("id", "")
+            files = []
+            for file in want.get("files", []):
+                url = file.get("url", "")
+                name = file.get("fname", "")
+                files.append(File(url=url, name=name))
 
-            task = Task(id=want_id, title=title, description=description, price=price)
+            task = Task(id=want_id, title=title, description=description, price=price, files=files)
             tasks.append(task)
         return tasks
